@@ -125,22 +125,7 @@ export type LogLevel =
 export type MessageKind<T, D> = { type: T; data: D }
 export type Message = MessageKind<'Text', string>
 
-// ===== 控制器配置 =====
-
-let controllerHost = '127.0.0.1'
-let controllerPort = 9090
-
-export function setControllerConfig(
-  host: string,
-  port: number,
-  secret: string,
-) {
-  controllerHost = host
-  controllerPort = port
-  // 同步到原生层 MihomoHttpClient
-  invoke('plugin:mihomo|update_controller', { host, port }).catch(() => {})
-  invoke('plugin:mihomo|update_secret', { secret }).catch(() => {})
-}
+// ===== HTTP API =====
 
 async function http<T = any>(
   method: string,
@@ -157,20 +142,6 @@ async function http<T = any>(
 }
 
 // ===== HTTP API =====
-
-export async function updateController(controller: string): Promise<void> {
-  const [host, portStr] = controller.trim().split(':')
-  controllerHost = host
-  controllerPort = parseInt(portStr)
-  await invoke('plugin:mihomo|update_controller', {
-    host,
-    port: controllerPort,
-  })
-}
-
-export async function updateSecret(secret: string): Promise<void> {
-  await invoke('plugin:mihomo|update_secret', { secret })
-}
 
 export async function getVersion(): Promise<MihomoVersion> {
   const v = await http<MihomoVersion>('GET', '/version')
