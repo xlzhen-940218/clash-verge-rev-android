@@ -40,7 +40,6 @@ class WindowStub {
   async isDecorated() {
     return false
   }
-  async setDecorations(_decorations: boolean) {}
   async onResized(
     _handler: (event: { payload: { width: number; height: number } }) => void,
   ): Promise<UnlistenFn> {

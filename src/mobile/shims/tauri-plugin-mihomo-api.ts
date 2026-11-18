@@ -326,7 +326,7 @@ export class MihomoWebSocket {
 
   private static open(path: string): Promise<MihomoWebSocket> {
     // WebView 从 file:// 加载，固定使用 ws:// 连接本地 mihomo
-    const url = `ws://${controllerHost}:${controllerPort}${path}`
+    const url = `ws://127.0.0.1:9090${path}`
     return new Promise((resolve, reject) => {
       try {
         const ws = new WebSocket(url)

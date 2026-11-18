@@ -5,19 +5,6 @@
  * 由 vite.android.config.mts 的 alias 注入。
  */
 
-declare global {
-  interface Window {
-    AndroidBridge: {
-      invoke(
-        cmd: string,
-        args: string,
-        callback: (result: string) => void,
-      ): void
-      allocateCallbackId(once: boolean): number
-    }
-  }
-}
-
 let cbSeq = 0
 const callbacks = new Map<number, (response: string) => void>()
 
