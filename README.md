@@ -34,6 +34,8 @@ Go to the [Release page](https://github.com/clash-verge-rev/clash-verge-rev/rele
 Supports Windows (x64/x86), Linux (x64/arm64) and macOS 11+ (intel/apple).
 支持 Windows (x64/x86)、Linux (x64/arm64) 和 macOS 11+ (intel/apple)。
 
+Android 客户端暂未提供发布包，可参考 [Android 客户端](#android-客户端) 自行构建。
+
 #### 我应当怎样选择发行版
 
 | 版本        | 特征                                     | 链接                                                                                   |
@@ -87,6 +89,7 @@ Supports Windows (x64/x86), Linux (x64/arm64) and macOS 11+ (intel/apple).
 - 系统代理和守卫、`TUN(虚拟网卡)` 模式。
 - 可视化节点和规则编辑
 - WebDav 配置备份和同步
+- Android 客户端：复用同一套界面，支持 `TUN` 模式、通知栏磁贴快捷开关与画中画流量悬浮窗。
 
 ### FAQ
 
@@ -114,6 +117,28 @@ uninstalled and the app starts in Sidecar mode. Use `pnpm dev:service` to
 explicitly install or update the isolated development service before launch,
 or `pnpm dev:sidecar` to force the unprivileged Sidecar workflow.
 
+## Android 客户端
+
+`mobile/android` 是一个 WebView 壳：复用本仓库的 React 界面，通过 JS Bridge 调用 Kotlin 层，
+再由 [CMFA](https://github.com/MetaCubeX/ClashMetaForAndroid) 提供的 mihomo 内核处理流量。
+
+```shell
+# 仓库根目录：构建移动端前端资源（输出到 app/src/main/assets/web）
+pnpm i
+pnpm run mobile:build
+
+# mobile/android：编译 APK
+.\gradlew.bat :app:assembleDebug   # Windows
+./gradlew :app:assembleDebug       # macOS / Linux
+```
+
+产物位于 `mobile/android/app/build/outputs/apk/debug/app-debug.apk`。
+
+环境要求：JDK 21、Android SDK 35、NDK 28.2、Go 1.22+。CMFA 的 `core`/`common`/`hideapi`
+模块位于 `mobile/android/cmfa`，不随本仓库提交，需按 [mobile/android/README.md](./mobile/android/README.md)
+自行准备。内核依赖的 `geoip.metadb`、`geosite.dat` 已内置在 `app/src/main/assets`，
+首次启动自动释放到应用私有目录，无需联网下载。
+
 ## Contributions
 
 Issue and PR welcome!
@@ -126,6 +151,7 @@ Clash Verge rev was based on or inspired by these projects and so on:
 - [tauri-apps/tauri](https://github.com/tauri-apps/tauri): Build smaller, faster, and more secure desktop applications with a web frontend.
 - [Dreamacro/clash](https://github.com/Dreamacro/clash): A rule-based tunnel in Go.
 - [MetaCubeX/mihomo](https://github.com/MetaCubeX/mihomo): A rule-based tunnel in Go.
+- [MetaCubeX/ClashMetaForAndroid](https://github.com/MetaCubeX/ClashMetaForAndroid): Android GUI for mihomo, provides the core and VpnService used by the Android client.
 - [Fndroid/clash_for_windows_pkg](https://github.com/Fndroid/clash_for_windows_pkg): A Windows/macOS GUI based on Clash.
 - [vitejs/vite](https://github.com/vitejs/vite): Next generation frontend tooling. It's fast!
 
