@@ -18,8 +18,6 @@ export async function check(_options?: CheckOptions): Promise<Update | null> {
   return null
 }
 
-export const checkUpdate = check
-
 export async function installUpdate(): Promise<void> {
   // no-op
 }
