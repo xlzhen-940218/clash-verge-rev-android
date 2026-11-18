@@ -7,6 +7,8 @@ function ErrorFallback({ error }: FallbackProps) {
   const errorMessage = error instanceof Error ? error.message : String(error)
   const errorStack = error instanceof Error ? error.stack : undefined
 
+  console.error('[ErrorBoundary]', errorMessage, '\n', errorStack)
+
   return (
     <div role="alert" style={{ padding: 16 }}>
       <h4>{t('shared.feedback.errors.unexpected')}</h4>

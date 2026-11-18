@@ -1,6 +1,6 @@
 import { useLockFn } from 'ahooks'
 import i18n from 'i18next'
-import { getVersion } from 'tauri-plugin-mihomo-api'
+import { getVersion, setControllerConfig } from 'tauri-plugin-mihomo-api'
 
 import {
   getClashInfo,
@@ -130,6 +130,23 @@ export const useClashInfo = () => {
     queryKey: ['getClashInfo'],
     queryFn: getClashInfo,
   })
+
+  // 将 external-controller 与 secret 注入 mihomo API shim（仅移动端需要）
+  if (
+    typeof window !== 'undefined' &&
+    (window as any).AndroidBridge &&
+    clashInfo
+  ) {
+    const ec = clashInfo['external-controller'] as string | undefined
+    if (ec) {
+      const [host, portStr] = ec.split(':')
+      setControllerConfig(
+        host || '127.0.0.1',
+        parseInt(portStr) || 9090,
+        clashInfo.secret || '',
+      )
+    }
+  }
 
   const patchInfo = useLockFn(async (patch: ClashInfoPatch) => {
     if (!hasClashInfoPayload(patch)) return

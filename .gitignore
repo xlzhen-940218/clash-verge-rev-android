@@ -17,3 +17,9 @@ target
 .vfox
 .claude
 .zed
+/mobile/android/**/build
+/mobile/android/.kotlin
+# CMFA 上游仓库（含预编译 libclash.so）由 README 指引单独获取
+/mobile/android/cmfa
+# 前端构建产物，由 pnpm mobile:build 生成
+/mobile/android/app/src/main/assets/web

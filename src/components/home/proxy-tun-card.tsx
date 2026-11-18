@@ -137,8 +137,12 @@ const TabDescription: FC<TabDescriptionProps> = memo(
 export const ProxyTunCard: FC = () => {
   const { t } = useTranslation()
   const theme = useTheme()
+  // Android 没有系统代理，只提供 TUN（VPN）模式
+  const isAndroid = OS_PLATFORM === 'android'
   const [activeTab, setActiveTab] = useState<string>(
-    () => localStorage.getItem(LOCAL_STORAGE_TAB_KEY) || 'system',
+    () =>
+      localStorage.getItem(LOCAL_STORAGE_TAB_KEY) ||
+      (isAndroid ? 'tun' : 'system'),
   )
 
   const { verge } = useVerge()
@@ -147,6 +151,8 @@ export const ProxyTunCard: FC = () => {
   const { indicator: systemProxyIndicator } = useSystemProxyState()
 
   const { enable_tun_mode } = verge ?? {}
+  // 旧版本可能把 system 写进 localStorage，Android 上强制回落到 tun
+  const effectiveTab = isAndroid ? 'tun' : activeTab
 
   const handleError = (err: unknown) => {
     showNotice.error(err)
@@ -163,7 +169,7 @@ export const ProxyTunCard: FC = () => {
   }, [])
 
   const tabDescription = useMemo(() => {
-    if (activeTab === 'system') {
+    if (effectiveTab === 'system') {
       return {
         text: systemProxyIndicator
           ? t('home.components.proxyTun.status.systemProxyEnabled')
@@ -180,7 +186,13 @@ export const ProxyTunCard: FC = () => {
         tooltip: t('home.components.proxyTun.tooltips.tunMode'),
       }
     }
-  }, [activeTab, systemProxyIndicator, enable_tun_mode, isTunModeAvailable, t])
+  }, [
+    effectiveTab,
+    systemProxyIndicator,
+    enable_tun_mode,
+    isTunModeAvailable,
+    t,
+  ])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
@@ -194,13 +206,15 @@ export const ProxyTunCard: FC = () => {
           zIndex: 2,
         }}
       >
-        <TabButton
-          isActive={activeTab === 'system'}
-          onClick={handleSystemTabClick}
-          icon={ComputerRounded}
-          label={t('settings.sections.system.toggles.systemProxy')}
-          hasIndicator={systemProxyIndicator}
-        />
+        {!isAndroid && (
+          <TabButton
+            isActive={activeTab === 'system'}
+            onClick={handleSystemTabClick}
+            icon={ComputerRounded}
+            label={t('settings.sections.system.toggles.systemProxy')}
+            hasIndicator={systemProxyIndicator}
+          />
+        )}
         <TabButton
           isActive={activeTab === 'tun'}
           onClick={handleTunTabClick}
@@ -237,7 +251,7 @@ export const ProxyTunCard: FC = () => {
         <ProxyControlSwitches
           onError={handleError}
           label={
-            activeTab === 'system'
+            effectiveTab === 'system'
               ? t('settings.sections.system.toggles.systemProxy')
               : t('settings.sections.system.toggles.tunMode')
           }

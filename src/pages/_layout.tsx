@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { Outlet, useNavigate } from 'react-router'
 
 import { BaseErrorBoundary } from '@/components/base'
+import { LayoutMobileNav } from '@/components/layout/layout-mobile-nav'
 import { LayoutSidebar } from '@/components/layout/layout-sidebar'
 import { NoticeManager } from '@/components/layout/notice-manager'
 import { ServiceMigrationDialog } from '@/components/layout/service-migration-dialog'
@@ -143,9 +144,18 @@ const Layout = () => {
         {customTitlebar}
 
         <div className="layout-content">
-          <LayoutSidebar isDark={isDark} isCollapsed={navCollapsed} />
+          {OS_PLATFORM !== 'android' && (
+            <LayoutSidebar isDark={isDark} isCollapsed={navCollapsed} />
+          )}
 
-          <div className="layout-content__right">
+          <div
+            className="layout-content__right"
+            style={
+              OS_PLATFORM === 'android'
+                ? { paddingBottom: '56px', width: '100%' }
+                : undefined
+            }
+          >
             <div className="the-bar"></div>
             <div className="the-content">
               <BaseErrorBoundary>
@@ -154,6 +164,8 @@ const Layout = () => {
             </div>
           </div>
         </div>
+
+        {OS_PLATFORM === 'android' && <LayoutMobileNav />}
       </Paper>
     </ThemeProvider>
   )

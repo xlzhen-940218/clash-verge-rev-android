@@ -406,7 +406,10 @@ const ProfileItemBase = (props: ProfileItemProps) => {
       })
 
       void mutateProfiles()
-    } catch {
+    } catch (err) {
+      console.error(`更新订阅 ${itemData.uid} 失败:`, err)
+      // 静默失败会让刷新按钮看起来“没反应”
+      showNotice.error('profiles.page.feedback.errors.updateFailed')
     } finally {
       setLoading(false)
     }

@@ -37,12 +37,14 @@ const SettingSystem = ({ onError }: Props) => {
         />
       </Box>
 
-      <Box data-setting-target="settings.sections.system.toggles.systemProxy">
-        <ProxyControlSwitches
-          label={t('settings.sections.system.toggles.systemProxy')}
-          onError={onError}
-        />
-      </Box>
+      {OS_PLATFORM !== 'android' && (
+        <Box data-setting-target="settings.sections.system.toggles.systemProxy">
+          <ProxyControlSwitches
+            label={t('settings.sections.system.toggles.systemProxy')}
+            onError={onError}
+          />
+        </Box>
+      )}
 
       <SettingItem
         data-setting-target="settings.sections.system.fields.autoLaunch"

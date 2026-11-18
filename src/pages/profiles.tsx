@@ -541,6 +541,7 @@ const ProfilePage = () => {
         trailing: true,
       })
       let cursor = 0
+      let failed = 0
 
       const updateOne = async (uid: string) => {
         try {
@@ -552,6 +553,7 @@ const ProfilePage = () => {
           throttleMutate()
         } catch (err: any) {
           console.error(`更新订阅 ${uid} 失败:`, err)
+          failed += 1
         }
       }
 
@@ -568,6 +570,10 @@ const ProfilePage = () => {
       } finally {
         setLoadingProfiles(uids, false)
         void mutateProfiles()
+        // 失败时给出提示，避免按钮看起来“没反应”
+        if (failed > 0) {
+          showNotice.error('profiles.page.feedback.errors.updateFailed')
+        }
       }
     },
     [mutateProfiles, setLoadingProfiles],
